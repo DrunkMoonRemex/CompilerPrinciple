@@ -1,0 +1,10 @@
+<application>
+  <component name="ParameterNameHintsSettings">
+    <blacklists>
+      <blacklist language="Java">
+        <added pattern="java.io.File.File(pathname)" />
+        <added pattern="org.springframework.web.context.request.RequestAttributes.getAttribute(s,i)" />
+      </blacklist>
+    </blacklists>
+  </component>
+</application>
