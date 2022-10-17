@@ -1,0 +1,3 @@
+<application>
+  <component name="MavenVersion" vmOptions="-Xms2048m -Xmx4096m" mavenHome="D:/developtools/apache-maven-3.3.9" />
+</application>
