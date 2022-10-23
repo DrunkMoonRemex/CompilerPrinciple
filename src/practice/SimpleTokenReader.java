@@ -24,7 +24,7 @@ public class SimpleTokenReader implements TokenReader {
     }
 
     @Override
-    public Token peel() {
+    public Token peek() {
         if (pos < tokens.size()){
             return tokens.get(pos);
         }

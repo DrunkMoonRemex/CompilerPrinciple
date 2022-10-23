@@ -4,7 +4,7 @@ public interface TokenReader {
 
     public Token read();
 
-    public Token peel();
+    public Token peek();
 
 
 }

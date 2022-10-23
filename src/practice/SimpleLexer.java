@@ -13,7 +13,7 @@ public class SimpleLexer {
 
     public static void main(String[] args) throws IOException {
 
-        String expression = "int a = 45;";
+        String expression = "int a =45;";
         SimpleLexer lexer  = new SimpleLexer();
 
         SimpleTokenReader reader = lexer.processExpression(expression);
@@ -57,90 +57,132 @@ public class SimpleLexer {
         List<Token> tokens = new ArrayList<>();
         CharArrayReader charArrayReader = new CharArrayReader(expression.toCharArray());
         Token token = new Token();
-        token.init();
+        DfaState state = DfaState.Initial;
         char ch;
         int temp;
         while ((temp = charArrayReader.read()) != -1) {
             ch = (char)temp;
-            switch (token.getTokenType()){
+            switch (state){
                 case Initial:
-                    token = initToken(ch);
+                    state = initDfaState(ch);
+                    if (state!=DfaState.Initial){
+                        token.setText(token.getText()+ch);
+                    }
                     break;
                 case Id:
                     if (isAlpha(ch) || isDigit(ch)){
                         token.setText(token.getText()+ch);
                     }else{
+                        token.setTokenType(TokenType.Identifier);
                         tokens.add(token);
-                        token = initToken(ch);
+                        token = new Token();
+                        state = initDfaState(ch);
+                        if (state!=DfaState.Initial){
+                            token.setText(token.getText()+ch);
+                        }
                     }
                     break;
                 case Id_i:
                     if (ch == 'n'){
-                        token.setTokenType(DfaState.Id_in);
+                        state = DfaState.Id_in;
                         token.setText(token.getText()+ch);
                     }else if (isAlpha(ch) || isDigit(ch)){
-                        token.setTokenType(DfaState.Id);
+                        state = DfaState.Id;
                         token.setText(token.getText()+ch);
                     }else{
+                        token.setTokenType(TokenType.Identifier);
                         tokens.add(token);
-                        token = initToken(ch);
+                        token = new Token();
+                        state = initDfaState(ch);
+                        if (state!=DfaState.Initial){
+                            token.setText(token.getText()+ch);
+                        }
                     }
                     break;
                 case Id_in:
                     if (ch == 't'){
-                        token.setTokenType(DfaState.Id_int);
+                        state = DfaState.Id_int;
                         token.setText(token.getText()+ch);
                     }else if (isAlpha(ch) || isDigit(ch)){
-                        token.setTokenType(DfaState.Id);
+                        state = DfaState.Id;
                         token.setText(token.getText()+ch);
                     }else{
+                        token.setTokenType(TokenType.Identifier);
                         tokens.add(token);
-                        token = initToken(ch);
+                        token = new Token();
+                        state = initDfaState(ch);
+                        if (state!=DfaState.Initial){
+                            token.setText(token.getText()+ch);
+                        }
                     }
                     break;
                 case Id_int:
                     if (isAlpha(ch) || isDigit(ch)){
-                        token.setTokenType(DfaState.Id);
+                        state = DfaState.Id;
                         token.setText(token.getText()+ch);
                     }else{
-                        token.setTokenType(DfaState.Int);
+                        token.setTokenType(TokenType.Int);
                         tokens.add(token);
-                        token = initToken(ch);
+                        token = new Token();
+                        state = initDfaState(ch);
+                        if (state!=DfaState.Initial){
+                            token.setText(token.getText()+ch);
+                        }
                     }
                     break;
                 case IntLiteral:
                     if (isDigit(ch)){
                         token.setText(token.getText()+ch);
                     }else{
+                        token.setTokenType(TokenType.IntLiteral);
                         tokens.add(token);
-                        token = initToken(ch);
+                        token = new Token();
+                        state = initDfaState(ch);
+                        if (state!=DfaState.Initial){
+                            token.setText(token.getText()+ch);
+                        }
                     }
                     break;
                 case GT:
                     if (ch == '='){
-                        token.setTokenType(DfaState.GE);
+                        state = DfaState.GE;
                         token.setText(token.getText()+ch);
                     }else{
+                        token.setTokenType(TokenType.GT);
                         tokens.add(token);
-                        token = initToken(ch);
+                        token = new Token();
+                        state = initDfaState(ch);
+                        if (state!=DfaState.Initial){
+                            token.setText(token.getText()+ch);
+                        }
                     }
                     break;
                 case Assignment:
                     if (ch == '='){
-                        token.setTokenType(DfaState.EQ);
+                        state = DfaState.EQ;
                         token.setText(token.getText()+ch);
                     }else{
+                        token.setTokenType(TokenType.Assignment);
                         tokens.add(token);
-                        token = initToken(ch);
+                        token = new Token();
+                        state = initDfaState(ch);
+                        if (state!=DfaState.Initial){
+                            token.setText(token.getText()+ch);
+                        }
                     }
                     break;
                 case LT:
                     if (ch == '='){
-                        token.setTokenType(DfaState.LE);
+                        state = DfaState.LE;
                         token.setText(token.getText()+ch);
                     }else{
+                        token.setTokenType(TokenType.LT);
                         tokens.add(token);
-                        token = initToken(ch);
+                        token = new Token();
+                        state = initDfaState(ch);
+                        if (state!=DfaState.Initial){
+                            token.setText(token.getText()+ch);
+                        }
                     }
                     break;
                 case GE:
@@ -153,8 +195,13 @@ public class SimpleLexer {
                 case Semicolon:
                 case LeftParen:
                 case RightParen:
+                    token.setTokenType(signalTransDfaStatesToTokenTypeMap.get(state));
                     tokens.add(token);
-                    token = initToken(ch);
+                    token = new Token();
+                    state = initDfaState(ch);
+                    if (state!=DfaState.Initial){
+                        token.setText(token.getText()+ch);
+                    }
                     break;
                 default:
                     break;
@@ -162,38 +209,33 @@ public class SimpleLexer {
 
         }
 
+
+        token.setTokenType(signalTransDfaStatesToTokenTypeMap.get(state));
         tokens.add(token);
         return new SimpleTokenReader(tokens);
     }
 
-    private Token initToken(char ch) {
-        Token token = new Token();
-        token.init();
+    private DfaState initDfaState(char ch) {
         String sch = String.valueOf(ch);
 
         if (isAlpha(ch)){
             if (ch == 'i'){
-                token.setTokenType(DfaState.Id_i);
+                return DfaState.Id_i;
             }else{
-                token.setTokenType(DfaState.Id);
+                return DfaState.Id;
             }
-            token.setText(sch);
-            return token;
         }else if(isDigit(ch)){
-            token.setTokenType(DfaState.IntLiteral);
-            token.setText(sch);
-            return token;
+            return DfaState.IntLiteral;
         }
 
         DfaState state = (DfaState)signalMatchDfaStateMap.get(sch);
 
         if (state==null){
-            return token;
+            return DfaState.Initial;
         };
 
-        token.setTokenType(state);
-        token.setText(sch);
-        return token;
+
+        return state;
 
     }
 
@@ -219,7 +261,23 @@ public class SimpleLexer {
         put("*", DfaState.Star);
         put("/", DfaState.Slash);
         put("(", DfaState.LeftParen);
-        put(")", DfaState.LeftParen);
+        put(")", DfaState.RightParen);
+    }};
+
+    public static HashMap<DfaState,TokenType> signalTransDfaStatesToTokenTypeMap = new HashMap<DfaState,TokenType>(){{
+        put(DfaState.GT,TokenType.GT);
+        put(DfaState.GE,TokenType.GE);
+        put(DfaState.LT,TokenType.LT);
+        put(DfaState.LE,TokenType.LE);
+        put(DfaState.EQ,TokenType.EQ);
+        put(DfaState.Assignment,TokenType.Assignment);
+        put(DfaState.Semicolon,TokenType.Semicolon);
+        put(DfaState.Plus,TokenType.Plus);
+        put(DfaState.Minus,TokenType.Minus);
+        put(DfaState.Star,TokenType.Star);
+        put(DfaState.Slash,TokenType.Slash);
+        put(DfaState.LeftParen,TokenType.LeftParen);
+        put(DfaState.RightParen,TokenType.RightParen);
     }};
 
 

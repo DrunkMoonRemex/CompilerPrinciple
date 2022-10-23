@@ -5,15 +5,15 @@ package practice;
  */
 public class Token {
 
-    private DfaState tokenType;
+    private TokenType tokenType;
 
-    private String text;
+    private String text = "";
 
-    public DfaState getTokenType() {
+    public TokenType getTokenType() {
         return tokenType;
     }
 
-    public void setTokenType(DfaState tokenType) {
+    public void setTokenType(TokenType tokenType) {
         this.tokenType = tokenType;
     }
 
@@ -25,14 +25,8 @@ public class Token {
         this.text = text;
     }
 
-    public void init(){
-        this.tokenType = DfaState.Initial;
-        this.setText("");
-    }
-
     @Override
     public String toString() {
         return tokenType + "\t" + text ;
-
     }
 }
