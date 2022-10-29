@@ -17,43 +17,43 @@ public class SimpleLexer {
         SimpleLexer lexer  = new SimpleLexer();
 
         SimpleTokenReader reader = lexer.processExpression(expression);
-        printReader(reader);
+        lexer.printReader(reader);
 
         expression = "inta age = 45;";
         reader = lexer.processExpression(expression);
-        printReader(reader);
+        lexer.printReader(reader);
 
         expression = "in age = 45;";
         reader = lexer.processExpression(expression);
-        printReader(reader);
+        lexer.printReader(reader);
 
         expression = "age >= 45;";
         reader = lexer.processExpression(expression);
-        printReader(reader);
+        lexer.printReader(reader);
 
         expression = "age > 45;";
         reader = lexer.processExpression(expression);
-        printReader(reader);
+        lexer.printReader(reader);
 
         expression = "int  a == 4;";
         reader = lexer.processExpression(expression);
-        printReader(reader);
+        lexer.printReader(reader);
 
         expression = "2 + 3 * 4 + (45/5)";
         reader = lexer.processExpression(expression);
-        printReader(reader);
+        lexer.printReader(reader);
 
 
     }
 
-    private static void printReader(SimpleTokenReader reader) {
+    public  void printReader(SimpleTokenReader reader) {
         System.out.println();
         for (Token token : reader.tokens) {
             System.out.println(token.toString());
         }
     }
 
-    private  SimpleTokenReader processExpression(String expression) throws IOException {
+    public  SimpleTokenReader processExpression(String expression) throws IOException {
         List<Token> tokens = new ArrayList<>();
         CharArrayReader charArrayReader = new CharArrayReader(expression.toCharArray());
         Token token = new Token();
