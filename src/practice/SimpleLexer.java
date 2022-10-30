@@ -265,6 +265,7 @@ public class SimpleLexer {
     }};
 
     public static HashMap<DfaState,TokenType> signalTransDfaStatesToTokenTypeMap = new HashMap<DfaState,TokenType>(){{
+        put(DfaState.IntLiteral,TokenType.IntLiteral);
         put(DfaState.GT,TokenType.GT);
         put(DfaState.GE,TokenType.GE);
         put(DfaState.LT,TokenType.LT);

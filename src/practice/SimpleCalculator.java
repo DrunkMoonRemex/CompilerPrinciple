@@ -13,6 +13,76 @@ public class SimpleCalculator {
         SimpleASTNode node = calculator.intDeclare(reader);
         calculator.dumpAST(node,"");
 
+
+        String exp = "45+(3+2)*5";
+        int num = calculator.calculate(exp);
+        System.out.println(num);
+
+        exp = "2+";
+        num = calculator.calculate(exp);
+        System.out.println(num);
+
+        exp = "2+3+4";
+        num = calculator.calculate(exp);
+        System.out.println(num);
+
+        exp = "2+3-4*5";
+        num = calculator.calculate(exp);
+        System.out.println(num);
+
+    }
+
+    private  int calculate(String expression) {
+        int res = 0;
+        try{
+        SimpleLexer lexer = new SimpleLexer();
+        SimpleCalculator calculator = new SimpleCalculator();
+        SimpleTokenReader reader = lexer.processExpression(expression);
+        SimpleASTNode node = calculator.additive(reader);
+        calculator.dumpAST(node,"");
+
+         res = getResult(node);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return res;
+    }
+
+    private int getResult(SimpleASTNode node) {
+
+        switch (node.getType()){
+            case Additive:
+                SimpleASTNode child1 = (SimpleASTNode) node.children.get(0);
+                SimpleASTNode child2 = (SimpleASTNode) node.children.get(1);
+                int leftResult = getResult(child1);
+                int rightResult = getResult(child2);
+                if ("+".equals(node.getText())){
+                    return leftResult+rightResult;
+                }else if ("-".equals(node.getText())){
+                    return leftResult-rightResult;
+                }
+                break;
+            case Multiplicative:
+                SimpleASTNode child3 = (SimpleASTNode) node.children.get(0);
+                SimpleASTNode child4 = (SimpleASTNode) node.children.get(1);
+                int leftRes = getResult(child3);
+                int rightRes = getResult(child4);
+                if ("*".equals(node.getText())){
+                    return leftRes*rightRes;
+                }else if ("/".equals(node.getText())){
+                    return leftRes/rightRes;
+                }
+                break;
+            case IntLiteral:
+                return Integer.parseInt(node.getText());
+            default:
+                break;
+
+        }
+
+
+        return 0;
+
     }
 
     /**
