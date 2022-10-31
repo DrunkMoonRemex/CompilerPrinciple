@@ -15,7 +15,7 @@ public enum TokenType {
 
     Semicolon,
     LeftParen,
-    rightParen,
+    RightParen,
 
     Assignment,
 
